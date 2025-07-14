@@ -8,10 +8,10 @@
     body {
       font-family: Arial, sans-serif;
       margin: 40px;
-      background-color: #ff06cd;
+      background-color: #f8f8f8;
     }
     h1 {
-      color: #ff5e00;
+      color: #444;
     }
     button {
       padding: 10px 20px;
@@ -19,18 +19,14 @@
       margin-right: 10px;
       margin-bottom: 20px;
     }
-    table {
-      width: 400px;
-      border-collapse: collapse;
-      background-color: white;
-    }
-    th, td {
-      border: 1px solid #aaa;
+    input {
       padding: 8px;
-      text-align: center;
+      margin-right: 10px;
+      font-size: 14px;
     }
-    th {
-      background-color: #eee;
+    #bevestiging {
+      margin-top: 10px;
+      color: green;
     }
   </style>
 </head>
@@ -40,7 +36,7 @@
 
   <input type="text" id="naam" placeholder="Naam (optioneel)" />
   <button onclick="registreerMoment()">Start</button>
-  <p id="bevestiging" style="color: green;"></p>
+  <p id="bevestiging"></p>
 
   <script>
     function registreerMoment() {
@@ -54,7 +50,7 @@
         toegevoegdDoor: naam
       };
 
-      fetch("https://script.google.com/macros/s/AKfycbxv5EVWlDC2pYpoORB8KIy_x7oIjO4g4WRhSxocCqhsSQfAhoUGaAfVGklHlo3ypG7aPA/exec", {
+      fetch("https://script.google.com/macros/s/AKfycbzWIKvLruq1RMF2bSBD90msQctR7zoXnxQOry7iVXv_VyTyfCN436SgGoaBHpTKn4Nl7A/exec", {
         method: "POST",
         body: JSON.stringify(data),
         headers: {
@@ -63,10 +59,14 @@
       })
       .then(response => response.text())
       .then(result => {
-        document.getElementById('bevestiging').innerText = "Moment opgeslagen!";
-        setTimeout(() => {
-          document.getElementById('bevestiging').innerText = "";
-        }, 3000);
+        if (result.startsWith("FOUT")) {
+          document.getElementById('bevestiging').innerText = result;
+        } else {
+          document.getElementById('bevestiging').innerText = "Moment opgeslagen!";
+          setTimeout(() => {
+            document.getElementById('bevestiging').innerText = "";
+          }, 3000);
+        }
       })
       .catch(error => {
         document.getElementById('bevestiging').innerText = "Fout bij opslaan!";
