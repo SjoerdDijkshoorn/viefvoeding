@@ -43,30 +43,25 @@
       const now = new Date();
       const naam = document.getElementById('naam').value || "Onbekend";
 
-      const data = {
-        datum: now.toLocaleDateString('nl-NL'),
-        uur: now.getHours().toString().padStart(2, '0'),
-        minuut: now.getMinutes().toString().padStart(2, '0'),
-        toegevoegdDoor: naam
-      };
+      const params = new URLSearchParams();
+      params.append("datum", now.toLocaleDateString('nl-NL'));
+      params.append("uur", now.getHours().toString().padStart(2, '0'));
+      params.append("minuut", now.getMinutes().toString().padStart(2, '0'));
+      params.append("toegevoegdDoor", naam);
 
       fetch("https://script.google.com/macros/s/AKfycbzWIKvLruq1RMF2bSBD90msQctR7zoXnxQOry7iVXv_VyTyfCN436SgGoaBHpTKn4Nl7A/exec", {
         method: "POST",
-        body: JSON.stringify(data),
+        body: params,
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/x-www-form-urlencoded"
         }
       })
       .then(response => response.text())
       .then(result => {
-        if (result.startsWith("FOUT")) {
-          document.getElementById('bevestiging').innerText = result;
-        } else {
-          document.getElementById('bevestiging').innerText = "Moment opgeslagen!";
-          setTimeout(() => {
-            document.getElementById('bevestiging').innerText = "";
-          }, 3000);
-        }
+        document.getElementById('bevestiging').innerText = result === "OK" ? "Moment opgeslagen!" : result;
+        setTimeout(() => {
+          document.getElementById('bevestiging').innerText = "";
+        }, 3000);
       })
       .catch(error => {
         document.getElementById('bevestiging').innerText = "Fout bij opslaan!";
