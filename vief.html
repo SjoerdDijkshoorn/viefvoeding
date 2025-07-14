@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Borstvoedingmomenten Vief Dijkshoorn</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f8f8f8;
+    }
+    h1 {
+      color: #444;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-right: 10px;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 300px;
+      border-collapse: collapse;
+      background-color: white;
+    }
+    th, td {
+      border: 1px solid #aaa;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #eee;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Borstvoedingmomenten Vief Dijkshoorn</h1>
+
+  <button onclick="registreerMoment()">Start</button>
+  <button onclick="resetMomenten()">Reset</button>
+
+  <table id="momentenTabel">
+    <thead>
+      <tr>
+        <th>Dag</th>
+        <th>Uur</th>
+        <th>Minuut</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Momenten worden hier geladen -->
+    </tbody>
+  </table>
+
+  <script>
+    // Laad eerder opgeslagen momenten bij het opstarten
+    window.onload = function() {
+      const opgeslagenMomenten = JSON.parse(localStorage.getItem('borstvoedingMomenten')) || [];
+      opgeslagenMomenten.forEach(voegMomentToeAanTabel);
+    };
+
+    function registreerMoment() {
+      const now = new Date();
+      const moment = {
+        dag: now.toLocaleDateString('nl-NL'),
+        uur: now.getHours().toString().padStart(2, '0'),
+        minuut: now.getMinutes().toString().padStart(2, '0')
+      };
+
+      voegMomentToeAanTabel(moment);
+
+      const huidigeMomenten = JSON.parse(localStorage.getItem('borstvoedingMomenten')) || [];
+      huidigeMomenten.push(moment);
+      localStorage.setItem('borstvoedingMomenten', JSON.stringify(huidigeMomenten));
+    }
+
+    function voegMomentToeAanTabel(moment) {
+      const tabel = document.getElementById('momentenTabel').getElementsByTagName('tbody')[0];
+      const nieuweRij = tabel.insertRow();
+      nieuweRij.insertCell(0).innerText = moment.dag;
+      nieuweRij.insertCell(1).innerText = moment.uur;
+      nieuweRij.insertCell(2).innerText = moment.minuut;
+    }
+
+    function resetMomenten() {
+      if (confirm("Weet je zeker dat je alle momenten wilt wissen?")) {
+        localStorage.removeItem('borstvoedingMomenten');
+        const tbody = document.getElementById('momentenTabel').getElementsByTagName('tbody')[0];
+        while (tbody.firstChild) {
+          tbody.removeChild(tbody.firstChild);
+        }
+      }
+    }
+  </script>
+
+</body>
+</html>
